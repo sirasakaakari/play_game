@@ -15,8 +15,15 @@ COPY . .
 
 # Laravelセットアップ
 RUN composer install
+
+# .env がなければコピー
+RUN if [ ! -f .env ]; then cp .env.example .env; fi
+
+# APP_KEY を生成
 RUN php artisan key:generate
 
-EXPOSE 10000
+# Render の割り当てポートに対応
+EXPOSE $PORT
 
-CMD php artisan serve --host=0.0.0.0 --port=10000
+# Laravel 開発サーバーを起動
+CMD php artisan serve --host=0.0.0.0 --port=$PORT
